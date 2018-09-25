@@ -11,36 +11,34 @@ void setup() {
     lcd.clear();
     lcd.home();
     Serial.begin(9600);
-    lcd.print("Sketch Starting!");
+    lcd.print(F("Sketch Starting!"));
     delay(200);
 }
 
-//A bit more accurate distance formulas:
 // * hitTime / 29.10 = distance [centimeters]
 // * hitTime / 74.75 = distance [inches]
 void loop() {
     float hitTime = ultrasonicSensor.getHitTime(); // In microseconds
-    float distance = hitTime / 29.10;
-    String message = "The hit time was " + String(hitTime) + " microseconds, distance = " + String(distance) + "\n";
 
     if( !hitTime && (ultrasonicSensor.getTimeout() == 5000) )
     {
         lcd.clear();
         lcd.home();
-        lcd.print("Timeout!");
+        lcd.print(F("Timeout!"));
     }
 
     else
     {
+        float distance = hitTime / 29.10;
         lcd.home();
-        lcd.print("HitTime=");
-        lcd.println(hitTime);
-        lcd.print("Dist=");
+        lcd.print(F("EchoTime = "));
         lcd.print(hitTime);
-        lcd.print(",");
+        lcd.setCursor(1, 0);
+        lcd.print(F("Dist="));
+        lcd.print(F("mm"));
         lcd.print(hitTime / 74.75);
-        lcd.println("\"");
+        lcd.println(F("\""));
     }
-    
+
     delay(1500); // Delay 1500ms (1.5s)
 }
