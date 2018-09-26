@@ -2,22 +2,23 @@
 #include <LiquidCrystal_I2C.h>
 #include <ST_HW_HC_SR04.h>
 
-LiquidCrystal_I2C lcd(0x27, 20, 4); // set the LCD address to 0x27 for a 16 chars and 2 line display
+LiquidCrystal_I2C lcd(0x3F, 16, 2); // set the LCD address to 0x27 for a 16 chars and 2 line display
 ST_HW_HC_SR04 ultrasonicSensor(5, 6); // ST_HW_HC_SR04(TRIG, ECHO)
 
-void setup() {
+void setup()
+{
     lcd.init(); // initialize the lcd
     lcd.backlight();
     lcd.clear();
     lcd.home();
-    Serial.begin(9600);
     lcd.print(F("Sketch Starting!"));
-    delay(200);
+    delay(2000);
 }
 
 // * hitTime / 29.10 = distance [centimeters]
 // * hitTime / 74.75 = distance [inches]
-void loop() {
+void loop()
+{
     float hitTime = ultrasonicSensor.getHitTime(); // In microseconds
 
     if( !hitTime && (ultrasonicSensor.getTimeout() == 5000) )
@@ -25,20 +26,23 @@ void loop() {
         lcd.clear();
         lcd.home();
         lcd.print(F("Timeout!"));
+        delay(1500);
     }
-
     else
     {
-        float distance = hitTime / 29.10;
+        float in = hitTime / 74.75,
+              mm = hitTime / 29.10;
         lcd.home();
-        lcd.print(F("EchoTime = "));
-        lcd.print(hitTime);
-        lcd.setCursor(1, 0);
-        lcd.print(F("Dist="));
+        lcd.print(F("Echo Time="));
+        lcd.print((uint8_t)hitTime);
+        lcd.print(F("us "));
+        lcd.setCursor(0, 1);
+        lcd.print(F("Dis="));
+        lcd.print(mm);
         lcd.print(F("mm"));
-        lcd.print(hitTime / 74.75);
+        lcd.print(F(","));
+        lcd.print(in);
         lcd.println(F("\""));
+        delay(500);
     }
-
-    delay(1500); // Delay 1500ms (1.5s)
 }
